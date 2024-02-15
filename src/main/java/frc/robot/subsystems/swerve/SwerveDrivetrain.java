@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -28,6 +29,10 @@ public class SwerveDrivetrain extends SubsystemBase {
   public double offsetAngle = 0;
 
   private final AHRS navx = new AHRS(Port.kUSB);
+
+  private final Ultrasonic jarvis = new Ultrasonic(0, 1);
+
+    private double distanceMillimeters = jarvis.getRangeMM(); 
 
   // private SwerveModulePosition[] getModulesPose() {
   //   return new SwerveModulePosition[] {
@@ -83,26 +88,26 @@ public class SwerveDrivetrain extends SubsystemBase {
       
   private final Translation2d frontLeft = 
     new Translation2d(
-      -SwerveConstants.width / 2d,
-      SwerveConstants.length / 2d);    
+      -SwerveConstants.width / 2,
+      SwerveConstants.length / 2);    
  
   private final Translation2d rearLeft = 
     new Translation2d(
-      -SwerveConstants.width / 2d,
-      SwerveConstants.length / 2d);
+      -SwerveConstants.width / 2,
+      -SwerveConstants.length / 2);
 
   private final Translation2d frontRight = 
     new Translation2d(
-      -SwerveConstants.width / 2d,
-      SwerveConstants.length / 2d);
+      SwerveConstants.width / 2,
+      SwerveConstants.length / 2);
       
   private final Translation2d rearRight = 
     new Translation2d(
-      -SwerveConstants.width / 2d,
-      SwerveConstants.length / 2d); 
+      SwerveConstants.width / 2,
+      -SwerveConstants.length / 2); 
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-    frontLeft, rearLeft, frontRight, rearRight);
+    frontLeft, frontRight, rearLeft, rearRight);
     
   private SwerveDrivetrain() {
     navx.reset();
@@ -122,11 +127,11 @@ public class SwerveDrivetrain extends SubsystemBase {
     rearRightModule.resetEncoders();
   }
 
-  public void brakeMotors() {
-    frontLeftModule.brakeMotors();
-    rearLeftModule.brakeMotors();
-    frontRightModule.brakeMotors();
-    rearRightModule.brakeMotors();
+  public void IdleModeMotors() {
+    frontLeftModule.IdleModeMotors();
+    rearLeftModule.IdleModeMotors();
+    frontRightModule.IdleModeMotors();
+    rearRightModule.IdleModeMotors();
   }
 
   public void setVelocityFactor(double factor) {
@@ -151,10 +156,10 @@ public class SwerveDrivetrain extends SubsystemBase {
   }
 
   public void setSwerveState(SwerveModuleState[] states) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, maxAV);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveConstants.maxV);
     frontLeftModule.setDesiredState(states[0]);
-    rearLeftModule.setDesiredState(states[1]);
-    frontRightModule.setDesiredState(states[2]);
+    rearLeftModule.setDesiredState(states[2]);
+    frontRightModule.setDesiredState(states[1]);
     rearRightModule.setDesiredState(states[3]); 
   }
 
@@ -208,7 +213,11 @@ public class SwerveDrivetrain extends SubsystemBase {
     SmartDashboard.putNumber("rl angle", rearLeftModule.getTurningPose());
     SmartDashboard.putNumber("rr angle", rearRightModule.getTurningPose());
 
-    SmartDashboard.putNumber("navx", getAngle());
+    SmartDashboard.putNumber("navx", getAngle());    
+
+    distanceMillimeters = jarvis.getRangeMM(); 
+    SmartDashboard.putNumber("distance", distanceMillimeters);
+    SmartDashboard.putNumber("distance1", jarvis.getRangeMM());
 
     // rearLeftModule.driveMotorSetPower(0.3);
     // rearLeftModule.driveMotorSetPower(0.3);

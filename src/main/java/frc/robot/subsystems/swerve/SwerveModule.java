@@ -92,7 +92,6 @@ public class SwerveModule {
     public double getAbsulotEncoderPose() {
        StatusSignal <Double> pose = absulotEncoder.getAbsolutePosition();
        pose.refresh();
-       // return pose.getValue();
         return isAbsulotEncoderInverted ? 360 - ((pose.getValue() + 0.5)) * 360
          : ((pose.getValue() + 0.5)) * 360;
     }
@@ -104,7 +103,7 @@ public class SwerveModule {
         TurningEncoder.setPosition(getAbsulotEncoderPose() - absulotEncoderOffset);
     }
 
-    public void brakeMotors() {
+    public void IdleModeMotors() {
         driveMotor.setIdleMode(IdleMode.kBrake);
         TurningMotor.setIdleMode(IdleMode.kBrake);
     }

@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -22,6 +23,8 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ShooterCommand;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveDrivetrain;
 
@@ -33,11 +36,13 @@ import frc.robot.subsystems.swerve.SwerveDrivetrain;
  */
 public class RobotContainer {
   public static final CommandPS4Controller driverController = new CommandPS4Controller(0); 
+  public static final CommandXboxController operatorController = new CommandXboxController(1);
   
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+    
     configureBindings();
   }
 
@@ -57,6 +62,25 @@ public class RobotContainer {
    driverController.R1().whileTrue(
     new InstantCommand(() -> SwerveDrivetrain.getInstance().setVelocityFactor(0.5)))
     .whileFalse(new InstantCommand(() -> SwerveDrivetrain.getInstance().setVelocityFactor(1))); 
+    
+    operatorController.a().onTrue(
+    new InstantCommand(() -> Shooter.getInstance().shootAmp(0.4)))
+    .onFalse(new InstantCommand(() -> Shooter.getInstance().shootAmp(0))); 
+
+    operatorController.b().whileTrue(
+    new InstantCommand(() -> Shooter.getInstance().shootInTake(-0.3)))
+    .whileFalse(new InstantCommand(() -> Shooter.getInstance().shootInTake(0)));
+    
+    operatorController.x().whileTrue(
+    new InstantCommand(() -> Shooter.getInstance().AdjustSetPower(0.2)))
+    .whileFalse(new InstantCommand(() -> Shooter.getInstance().setAdjustVolt(0.4)));
+  
+   operatorController.y().whileTrue(
+    new InstantCommand(() -> Shooter.getInstance().AdjustSetPower(-0.1)))
+    .whileFalse(new InstantCommand(() -> Shooter.getInstance().setAdjustVolt(0.4)));
+
+  //  operatorController.y().whileTrue(
+  //  new ShooterCommand());
   }
 
   /**

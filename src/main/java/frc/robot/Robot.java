@@ -7,7 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.swerveDriveCommand;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.SwerveDrivetrain;
 
 public class Robot extends TimedRobot {
@@ -19,12 +22,14 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_robotContainer = new RobotContainer();
     SwerveDrivetrain.getInstance();
-    SwerveDrivetrain.getInstance().brakeMotors();
+    SwerveDrivetrain.getInstance().IdleModeMotors();
+    SwerveDrivetrain.getInstance().resetEncoders();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+
   }
 
   @Override
@@ -57,7 +62,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    SwerveDrivetrain.getInstance().resetEncoders();
+    SwerveDrivetrain.getInstance().resetEncoders();    
 
     CommandScheduler.getInstance().setDefaultCommand(
       SwerveDrivetrain.getInstance(), 

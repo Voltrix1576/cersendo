@@ -38,7 +38,8 @@ public class swerveDriveCommand extends Command {
       omega = 0;
     }
 
-    swerve.drive(xv, yv, omega, true);
+    swerve.drive(xv, yv, omega, false);
+    // swerve.drive(1, 0, 0, true);
   }
 
   // Called once the command ends or is interrupted.

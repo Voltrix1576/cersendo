@@ -90,10 +90,10 @@ public class SwerveModule {
     }
 
     public double getAbsulotEncoderPose() {
-       StatusSignal <Double> pose = absulotEncoder.getAbsolutePosition();
+       StatusSignal<Double> pose = absulotEncoder.getAbsolutePosition();
        pose.refresh();
-        return isAbsulotEncoderInverted ? 360 - ((pose.getValue() + 0.5)) * 360
-         : ((pose.getValue() + 0.5)) * 360;
+       return isAbsulotEncoderInverted ? 360 - ((pose.getValue() + 0.5)) * 360
+       : ((pose.getValue() + 0.5)) * 360;
     }
 
     

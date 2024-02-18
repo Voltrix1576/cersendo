@@ -15,6 +15,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,11 +30,9 @@ public class SwerveDrivetrain extends SubsystemBase {
 
   public double offsetAngle = 0;
 
-  private final AHRS navx = new AHRS(Port.kUSB);
+  
 
-  private final Ultrasonic jarvis = new Ultrasonic(0, 1);
-
-    private double distanceMillimeters = jarvis.getRangeMM(); 
+  private final AHRS navx = new AHRS(SPI.Port.kMXP);
 
   // private SwerveModulePosition[] getModulesPose() {
   //   return new SwerveModulePosition[] {
@@ -215,11 +215,10 @@ public class SwerveDrivetrain extends SubsystemBase {
 
     SmartDashboard.putNumber("navx", getAngle());    
 
-    distanceMillimeters = jarvis.getRangeMM(); 
-    SmartDashboard.putNumber("distance", distanceMillimeters);
-    SmartDashboard.putNumber("distance1", jarvis.getRangeMM());
+    // frontLeftModule.driveUsingPID(2);
+    // SmartDashboard.putNumber("Turn PID", frontLeftModule.getDriveVelocity());
 
-    // rearLeftModule.driveMotorSetPower(0.3);
+    // rearRightModule.driveMotorSetPower(0.3);
     // rearLeftModule.driveMotorSetPower(0.3);
     // rearLeftModule.driveMotorSetPower(0.3);
     // rearLeftModule.driveMotorSetPower(0.3);

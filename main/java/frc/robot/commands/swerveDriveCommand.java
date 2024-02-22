@@ -12,7 +12,7 @@ public class swerveDriveCommand extends Command {
   private SwerveDrivetrain swerve;
 
   public swerveDriveCommand() {
-    swerve = SwerveDrivetrain.getInstance();
+    swerve = swerve.getInstance();
 
     addRequirements(swerve);
   }

@@ -38,9 +38,6 @@ public class Shooter extends SubsystemBase {
     private final CANSparkFlex backMasterShooter = new CANSparkFlex(
     ShooterConstance.backMasterShootingID, MotorType.kBrushed);
 
-    private double startTime;
-    private boolean isWating = false;
-
     private final TalonSRX backSlaveShooter = new TalonSRX(ShooterConstance.backSlaveShootingID);
 
    // private final Servo armServo = new Servo(0);
@@ -57,6 +54,7 @@ public class Shooter extends SubsystemBase {
     pidControllerAdjust.setP(ShooterConstance.adjustkp);
     pidControllerAdjust.setI(ShooterConstance.adjustki);
     pidControllerAdjust.setD(ShooterConstance.adjustkd);
+    pidControllerAdjust.setOutputRange(-0.2, 0.2);
   }
 
   public void shootOutTake(double power) {
@@ -73,7 +71,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void shootSpeaker(double power) {
-       calculate(14.29);
+       calculate(13.69);
        frontMasterShooting.set(power);
   }
 
@@ -94,6 +92,7 @@ public class Shooter extends SubsystemBase {
   }
 
    public void shootInTake(double power) {
+    calculate(13.69);
     frontMasterShooting.set(power);
     backMasterShooter.set(power);
     backSlaveShooter.set(TalonSRXControlMode.PercentOutput, power);

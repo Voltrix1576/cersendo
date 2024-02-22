@@ -34,17 +34,17 @@ public class SwerveDrivetrain extends SubsystemBase {
 
   private final AHRS navx = new AHRS(SPI.Port.kMXP);
 
-  // private SwerveModulePosition[] getModulesPose() {
-  //   return new SwerveModulePosition[] {
-  //     frontLeftModule.getModulePose(),
-  //     rearLeftModule.getModulePose(),
-  //     frontRightModule.getModulePose(),
-  //     rearRightModule.getModulePose()
-  //   };
-  // }
+  private SwerveModulePosition[] getModulesPose() {
+    return new SwerveModulePosition[] {
+      frontLeftModule.getModulePose(),
+      rearLeftModule.getModulePose(),
+      frontRightModule.getModulePose(),
+      rearRightModule.getModulePose()
+    };
+  }
 
-  // private final SwerveDriveOdometry odometry = 
-  //   new SwerveDriveOdometry(getKinematics(), getRotation2d(), getModulesPose());
+  private final SwerveDriveOdometry odometry = 
+    new SwerveDriveOdometry(getKinematics(), getRotation2d(), getModulesPose());
 
   private SwerveModule frontLeftModule = 
     new SwerveModule(
@@ -109,7 +109,7 @@ public class SwerveDrivetrain extends SubsystemBase {
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
     frontLeft, frontRight, rearLeft, rearRight);
     
-  private SwerveDrivetrain() {
+  public SwerveDrivetrain() {
     navx.reset();
   }  
       
@@ -174,15 +174,15 @@ public class SwerveDrivetrain extends SubsystemBase {
     setSwerveState(states);
   }
 
-  // public Pose2d getPose() {
-  //   return odometry.getPoseMeters();
-  // }
+  public Pose2d getPose() {
+    return odometry.getPoseMeters();
+  }
 
-  // public void resetOdometry(Pose2d pose) {
-  //   odometry.resetPosition(getRotation2d(), getModulesPose(), pose);
-  // }
+  public void resetOdometry(Pose2d pose) {
+    odometry.resetPosition(getRotation2d(), getModulesPose(), pose);
+  }
 
-  public static SwerveDrivetrain getInstance() {
+  public  SwerveDrivetrain getInstance() {
     if (instance == null) {
       instance = new SwerveDrivetrain();
     }

@@ -74,10 +74,14 @@ public class SwerveConstants {
     public static final double maxAcceleration = 3; //TODO
     public static final double maxAngolarAcceleration = maxAcceleration / robotRaduis;
 
-    public static final PIDController xController = new PIDController(0.1, 0, 0);
-    public static final PIDController yController = new PIDController(0.1, 0, 0);
+    public static final PIDController xController = new PIDController(0.06, 0, 0);
+    public static final PIDController yController = new PIDController(0.06, 0, 0);
     public static final ProfiledPIDController angleController = 
-    new ProfiledPIDController(0.1, 0, 0,
+    new ProfiledPIDController(0.06, 0, 0,
         new TrapezoidProfile.Constraints(maxAV, maxAngolarAcceleration)); 
         //ask kaplan if i should change the 0.1 to the new p after i changed
+
+        public static final TrapezoidProfile.Constraints kThetaControllerConstraints = 
+        new TrapezoidProfile.Constraints(
+            Math.PI, Math.PI);    
 }

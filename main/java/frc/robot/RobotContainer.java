@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.swerveDriveCommand;
+import frc.robot.commands.Autos.autoLine;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveDrivetrain;
@@ -41,6 +42,7 @@ public class RobotContainer {
   public static final CommandPS4Controller driverController = new CommandPS4Controller(0); 
   public static final CommandXboxController operatorController = new CommandXboxController(1);
   private double startTime;
+  public final SwerveDrivetrain swerve = new SwerveDrivetrain();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -60,20 +62,15 @@ public class RobotContainer {
    */
   private void configureBindings() {
    driverController.triangle().whileTrue(
-    new InstantCommand(() -> SwerveDrivetrain.getInstance().updateOffset()));
+    new InstantCommand(() -> swerve.updateOffset()));
     
    driverController.R1().whileTrue(
-    new InstantCommand(() -> SwerveDrivetrain.getInstance().setVelocityFactor(0.5)))
-    .whileFalse(new InstantCommand(() -> SwerveDrivetrain.getInstance().setVelocityFactor(1))); 
+    new InstantCommand(() -> swerve.setVelocityFactor(0.5)))
+    .whileFalse(new InstantCommand(() -> swerve.setVelocityFactor(1))); 
     
     driverController.R2().whileTrue(
-    new InstantCommand(() -> SwerveDrivetrain.getInstance().setVelocityFactor(0.25)))
-    .whileFalse(new InstantCommand(() -> SwerveDrivetrain.getInstance().setVelocityFactor(1))); 
-
-    // operatorController.a().whileTrue(new SequentialCommandGroup(
-    // new InstantCommand(() -> Shooter.getInstance().shootAmp(0.5 )), 
-    // new InstantCommand(() -> Shooter.getInstance().startConveyer(0.5))))
-    // .onFalse(new InstantCommand(() -> Shooter.getInstance().resetShoot())); 
+    new InstantCommand(() -> swerve.setVelocityFactor(0.25)))
+    .whileFalse(new InstantCommand(() -> swerve.setVelocityFactor(1))); 
 
     operatorController.a().onTrue(
       new SequentialCommandGroup(
@@ -102,9 +99,9 @@ public class RobotContainer {
       new InstantCommand(() -> Shooter.getInstance().resetArm())
     );
 
-    operatorController.b().whileTrue(
+    operatorController.b().onTrue(
     new InstantCommand(() -> Shooter.getInstance().shootInTake(-0.3)))
-    .whileFalse(new InstantCommand(() -> Shooter.getInstance().shootInTake(0)));
+    .onFalse(new InstantCommand(() -> Shooter.getInstance().shootInTake(0)));
     
     operatorController.x().whileTrue(
     new InstantCommand(() -> Shooter.getInstance().AdjustSetPower(0.2)))
@@ -124,32 +121,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // TrajectoryConfig trajectoryConfig = new TrajectoryConfig(SwerveConstants.maxV, 
-    // SwerveConstants.maxAcceleration).setKinematics(SwerveDrivetrain.getInstance().getKinematics());
-
-    // Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-    //   new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
-    //   List.of(
-    //     new Translation2d(1, 0)
-    //   ), new Pose2d(1,1, Rotation2d.fromDegrees(90)),
-    //   trajectoryConfig);
-
-
-    // SwerveConstants.angleController.enableContinuousInput(-Math.PI, Math.PI);
-
-    // SwerveControllerCommand swerveControllerCommand = 
-    //   new SwerveControllerCommand(
-    //     trajectory, 
-    //     SwerveDrivetrain.getInstance()::getPose,
-    //     SwerveDrivetrain.getInstance().getKinematics(),
-    //     SwerveConstants.xController,
-    //     SwerveConstants.yController,
-    //     SwerveConstants.angleController,
-    //     SwerveDrivetrain.getInstance()::setSwerveState);
-    // return new SequentialCommandGroup(
-    //     new InstantCommand(() -> SwerveDrivetrain.getInstance().resetOdometry(trajectory.getInitialPose())),
-    //     swerveControllerCommand,
-    //     new InstantCommand(() -> SwerveDrivetrain.getInstance().stop()));
-    return null;
+    return new autoLine(swerve);
   }
 }

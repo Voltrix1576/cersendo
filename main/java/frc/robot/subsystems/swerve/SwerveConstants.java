@@ -81,7 +81,4 @@ public class SwerveConstants {
         new TrapezoidProfile.Constraints(maxAV, maxAngolarAcceleration)); 
         //ask kaplan if i should change the 0.1 to the new p after i changed
 
-        public static final TrapezoidProfile.Constraints kThetaControllerConstraints = 
-        new TrapezoidProfile.Constraints(
-            Math.PI, Math.PI);    
 }

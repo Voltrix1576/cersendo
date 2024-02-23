@@ -12,8 +12,9 @@ public class swerveDriveCommand extends Command {
   private SwerveDrivetrain swerve;
 
   public swerveDriveCommand() {
-    swerve = swerve.getInstance();
-
+    swerve = SwerveDrivetrain.getInstance();
+    // swerve.resetEncoders();    
+    // swerve.IdleModeMotors();
     addRequirements(swerve);
   }
 

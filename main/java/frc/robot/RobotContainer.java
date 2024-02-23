@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.swerveDriveCommand;
-import frc.robot.commands.Autos.autoLine;
+// import frc.robot.commands.Autos.autoLine;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveDrivetrain;
@@ -42,12 +42,11 @@ public class RobotContainer {
   public static final CommandPS4Controller driverController = new CommandPS4Controller(0); 
   public static final CommandXboxController operatorController = new CommandXboxController(1);
   private double startTime;
-  public final SwerveDrivetrain swerve = new SwerveDrivetrain();
+  // public final SwerveDrivetrain swerve = new SwerveDrivetrain();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
-    
+
     configureBindings();
   }
 
@@ -62,22 +61,22 @@ public class RobotContainer {
    */
   private void configureBindings() {
    driverController.triangle().whileTrue(
-    new InstantCommand(() -> swerve.updateOffset()));
+    new InstantCommand(() -> SwerveDrivetrain.getInstance().updateOffset()));
     
    driverController.R1().whileTrue(
-    new InstantCommand(() -> swerve.setVelocityFactor(0.5)))
-    .whileFalse(new InstantCommand(() -> swerve.setVelocityFactor(1))); 
+    new InstantCommand(() -> SwerveDrivetrain.getInstance().setVelocityFactor(0.5)))
+    .whileFalse(new InstantCommand(() -> SwerveDrivetrain.getInstance().setVelocityFactor(1))); 
     
     driverController.R2().whileTrue(
-    new InstantCommand(() -> swerve.setVelocityFactor(0.25)))
-    .whileFalse(new InstantCommand(() -> swerve.setVelocityFactor(1))); 
+    new InstantCommand(() -> SwerveDrivetrain.getInstance().setVelocityFactor(0.25)))
+    .whileFalse(new InstantCommand(() -> SwerveDrivetrain.getInstance().setVelocityFactor(1))); 
 
     operatorController.a().onTrue(
       new SequentialCommandGroup(
-        new InstantCommand(() -> Shooter.getInstance().shootAmp(0.6 )),
+        new InstantCommand(() -> Shooter.getInstance().shootAmp(0.1)),
         new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
-        new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 1.5), //delay to start conveyr
-        new InstantCommand(() -> Shooter.getInstance().startConveyer(0.4)),
+        new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 2), //delay to start conveyr
+        new InstantCommand(() -> Shooter.getInstance().startConveyer(0.15)),
         new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
         new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 1),
         new InstantCommand(() -> Shooter.getInstance().resetShoot())
@@ -100,19 +99,20 @@ public class RobotContainer {
     );
 
     operatorController.b().onTrue(
-    new InstantCommand(() -> Shooter.getInstance().shootInTake(-0.3)))
+    new InstantCommand(() -> Shooter.getInstance().shootInTake(-0.15)))
     .onFalse(new InstantCommand(() -> Shooter.getInstance().shootInTake(0)));
     
     operatorController.x().whileTrue(
-    new InstantCommand(() -> Shooter.getInstance().AdjustSetPower(0.2)))
+    new InstantCommand(() -> Shooter.getInstance().AdjustSetPower(0.1)))
     .whileFalse(new InstantCommand(() -> Shooter.getInstance().setAdjustVolt(0.38)));
   
    operatorController.y().whileTrue(
     new InstantCommand(() -> Shooter.getInstance().AdjustSetPower(-0.2)))
     .whileFalse(new InstantCommand(() -> Shooter.getInstance().setAdjustVolt(0.38)));
 
-  //  operatorController.y().whileTrue(
-  //  new ShooterCommand());
+  //  operatorController.rightTrigger().whileTrue(
+  //   new InstantCommand(() -> Shooter.getInstance().shootAmp(0.15)))
+  //   .whileFalse(new InstantCommand(() -> Shooter.getInstance().setAdjustVolt(0.38))); 
   }
 
   /**
@@ -121,6 +121,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new autoLine(swerve);
+    return null;
   }
 }

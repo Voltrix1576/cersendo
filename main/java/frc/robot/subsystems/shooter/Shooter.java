@@ -66,7 +66,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void shootAmp(double power) {
-    // calculate(10);
+    calculate(11.96);
     frontMasterShooting.set(power);
   }
 

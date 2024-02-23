@@ -15,15 +15,14 @@ import frc.robot.subsystems.swerve.SwerveDrivetrain;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-  private SwerveDrivetrain swerve;
   private RobotContainer m_robotContainer;
 
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-    swerve = new SwerveDrivetrain();
-    swerve.IdleModeMotors();
-    swerve.resetEncoders();
+    SwerveDrivetrain.getInstance();
+    SwerveDrivetrain.getInstance().IdleModeMotors();
+    SwerveDrivetrain.getInstance().resetEncoders();
   }
 
   @Override
@@ -62,10 +61,10 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    swerve.resetEncoders();    
+    SwerveDrivetrain.getInstance().resetEncoders();    
 
     CommandScheduler.getInstance().setDefaultCommand(
-      swerve, 
+      SwerveDrivetrain.getInstance(), 
         new swerveDriveCommand());
   }
 

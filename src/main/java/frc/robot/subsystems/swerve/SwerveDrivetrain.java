@@ -6,6 +6,8 @@ package frc.robot.subsystems.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -15,9 +17,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SerialPort.Port;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -30,7 +30,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 
   public double offsetAngle = 0;
 
-  
+  private UsbCamera camera = new UsbCamera("Camera", 0); 
 
   private final AHRS navx = new AHRS(SPI.Port.kMXP);
 
@@ -109,8 +109,9 @@ public class SwerveDrivetrain extends SubsystemBase {
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
     frontLeft, frontRight, rearLeft, rearRight);
     
-  private SwerveDrivetrain() {
+  public SwerveDrivetrain() {
     navx.reset();
+    camera = CameraServer.startAutomaticCapture();
   }  
       
   public void stop() {
@@ -140,8 +141,10 @@ public class SwerveDrivetrain extends SubsystemBase {
   }
 
   public double getAngle() {
-    return -navx.getYaw();
+    return navx.getYaw();
   }
+
+
 
   public void updateOffset() {
     offsetAngle = getAngle();
@@ -188,6 +191,7 @@ public class SwerveDrivetrain extends SubsystemBase {
   }
   
   
+  
 
   @Override
   public void periodic() {
@@ -215,12 +219,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 
     SmartDashboard.putNumber("navx", getAngle());    
 
-    // frontLeftModule.driveUsingPID(2);
-    // SmartDashboard.putNumber("Turn PID", frontLeftModule.getDriveVelocity());
 
-    // rearRightModule.driveMotorSetPower(0.3);
-    // rearLeftModule.driveMotorSetPower(0.3);
-    // rearLeftModule.driveMotorSetPower(0.3);
-    // rearLeftModule.driveMotorSetPower(0.3);
+
   }
 }

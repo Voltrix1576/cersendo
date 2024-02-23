@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Shooter extends SubsystemBase {
   private static Shooter instance;
- 
+
   private final CANSparkFlex frontMasterShooting = new CANSparkFlex(
     ShooterConstance.frontMasterShootingID, MotorType.kBrushless);
  
@@ -43,6 +43,7 @@ public class Shooter extends SubsystemBase {
    // private final Servo armServo = new Servo(0);
 
     private final SparkPIDController pidControllerAdjust;
+
     
  
 
@@ -50,21 +51,48 @@ public class Shooter extends SubsystemBase {
     frontSlaveShooting.follow(frontMasterShooting, true);
     slaveArm.follow(masterArm);
     pidControllerAdjust = masterArm.getPIDController();
-    pidControllerAdjust.setP(ShooterConstance.kp);
-    pidControllerAdjust.setI(ShooterConstance.ki);
-    pidControllerAdjust.setD(ShooterConstance.kd);
+    pidControllerAdjust.setP(ShooterConstance.adjustkp);
+    pidControllerAdjust.setI(ShooterConstance.adjustki);
+    pidControllerAdjust.setD(ShooterConstance.adjustkd);
+    pidControllerAdjust.setOutputRange(-0.2, 0.2);
+  }
+
+  public void shootOutTake(double power) {
+    
+    frontMasterShooting.set(power);
+    backMasterShooter.set(power);
+    backSlaveShooter.set(TalonSRXControlMode.PercentOutput, power);
+    
   }
 
   public void shootAmp(double power) {
-    calculate(24);
-    Timer.delay(0.5);
+    calculate(11.96);
     frontMasterShooting.set(power);
-    Timer.delay(2.5);
+  }
+
+  public void shootSpeaker(double power) {
+       calculate(13.69);
+       frontMasterShooting.set(power);
+  }
+
+  public void startConveyer(double power) {
     backMasterShooter.set(power);
     backSlaveShooter.set(TalonSRXControlMode.PercentOutput, power);
   }
 
+  public void resetArm()
+  {
+      calculate(2.98);
+  }
+
+  public void resetShoot(){
+    backMasterShooter.set(0);
+    backSlaveShooter.set(TalonSRXControlMode.PercentOutput, 0);
+    frontMasterShooting.set(0);
+  }
+
    public void shootInTake(double power) {
+    calculate(13.69);
     frontMasterShooting.set(power);
     backMasterShooter.set(power);
     backSlaveShooter.set(TalonSRXControlMode.PercentOutput, power);
@@ -82,7 +110,7 @@ public class Shooter extends SubsystemBase {
   public void calculate(double setPoint) {
     pidControllerAdjust.setReference(setPoint, ControlType.kPosition);
 }
-
+  
   public void setAdjustVolt(double voltage)
   {
       masterArm.setVoltage(voltage);

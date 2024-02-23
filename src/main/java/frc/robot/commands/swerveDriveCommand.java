@@ -13,7 +13,8 @@ public class swerveDriveCommand extends Command {
 
   public swerveDriveCommand() {
     swerve = SwerveDrivetrain.getInstance();
-
+    // swerve.resetEncoders();    
+    // swerve.IdleModeMotors();
     addRequirements(swerve);
   }
 
@@ -38,7 +39,7 @@ public class swerveDriveCommand extends Command {
       omega = 0;
     }
 
-    swerve.drive(xv, yv, omega, false);
+    swerve.drive(xv, yv, -omega, true);
     // swerve.drive(1, 0, 0, true);
   }
 

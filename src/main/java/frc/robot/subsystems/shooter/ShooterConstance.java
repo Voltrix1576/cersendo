@@ -12,7 +12,7 @@ public class ShooterConstance {
     //adjust
     public static final int masterArmID = 19; 
     public static final int slaveArmID = 18; 
-    public static final double kp = 0.1; //TODO
-    public static final double ki = 0; //TODO
-    public static final double kd = 0; //TODO
+    public static final double adjustkp = 0.6;
+    public static final double adjustki = 0; 
+    public static final double adjustkd = 0; 
 }

@@ -5,9 +5,6 @@
 package frc.robot.subsystems.swerve;
 
 import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -19,6 +16,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDrivetrain extends SubsystemBase {
@@ -29,8 +28,6 @@ public class SwerveDrivetrain extends SubsystemBase {
   public double maxAV = SwerveConstants.maxAV;
 
   public double offsetAngle = 0;
-
-  private UsbCamera camera = new UsbCamera("Camera", 0); 
 
   private final AHRS navx = new AHRS(SPI.Port.kMXP);
 
@@ -111,7 +108,6 @@ public class SwerveDrivetrain extends SubsystemBase {
     
   public SwerveDrivetrain() {
     navx.reset();
-    camera = CameraServer.startAutomaticCapture();
   }  
       
   public void stop() {
@@ -196,7 +192,9 @@ public class SwerveDrivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // odometry.update(getRotation2d(), getModulesPose());
-    
+
+    // SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+
     // drive(SwerveConstants.xController.calculate(getPose().getX(), 1), 0, 0, false);
  
     // drive(0, SwerveConstants.yController.calculate(getPose().getY(), 1), 0, false);
@@ -218,8 +216,6 @@ public class SwerveDrivetrain extends SubsystemBase {
     SmartDashboard.putNumber("rr angle", rearRightModule.getTurningPose());
 
     SmartDashboard.putNumber("navx", getAngle());    
-
-
 
   }
 }

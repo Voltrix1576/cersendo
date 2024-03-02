@@ -32,9 +32,9 @@ public class SwerveConstants {
 
     // rear left
     public static final int rearLeftDriveID = 14; 
-    public static final int rearLeftTurningID = 13; 
+    public static final int rearLeftTurningID = 19; 
     public static final int rearLeftAbsulotEncoderID = 4; 
-    public static final double rearLeftAbsulotEncoderOffset = 51.94;
+    public static final double rearLeftAbsulotEncoderOffset = 53.9;
     public static final boolean rearLeftIstDriveMotorInverted  = true;  
     public static final boolean rearLeftIstTurningMotorInverted = true; 
     public static final boolean rearLeftIsAbsulotEncoderInverted = true; 
@@ -43,7 +43,7 @@ public class SwerveConstants {
     public static final int frontLeftDriveID = 15; 
     public static final int frontLeftTurningID = 8; 
     public static final int frontLeftAbsulotEncoderID = 6; 
-    public static final double frontLeftAbsulotEncoderOffset = 174.90; 
+    public static final double frontLeftAbsulotEncoderOffset = 346.11; 
     public static final boolean frontLeftIstDriveMotorInverted = true;  
     public static final boolean frontLeftIstTurningMotorInverted = true;
     public static final boolean frontLeftIsAbsulotEncoderInverted = true;
@@ -52,7 +52,7 @@ public class SwerveConstants {
     public static final int rearRightDriveID = 12; 
     public static final int rearRightTurningID = 9; 
     public static final int rearRightAbsulotEncoderID = 2; 
-    public static final double rearRightAbsulotEncoderOffset =  266.66; 
+    public static final double rearRightAbsulotEncoderOffset = 281.42; 
     public static final boolean rearRightIstDriveMotorInverted = true; 
     public static final boolean rearRightIstTurningMotorInverted = true;
     public static final boolean rearRightIsAbsulotEncoderInverted = true;
@@ -61,7 +61,7 @@ public class SwerveConstants {
     public static final int frontRightDriveID = 7; 
     public static final int frontRightTurningID = 11; 
     public static final int frontRightAbsulotEncoderID = 5; 
-    public static final double frontRightAbsulotEncoderOffset = 89.38; 
+    public static final double frontRightAbsulotEncoderOffset = 174.46; 
     public static final boolean frontRightIstDriveMotorInverted = true; 
     public static final boolean frontRightIstTurningMotorInverted = true; 
     public static final boolean frontRightIsAbsulotEncoderInverted = true;
@@ -73,12 +73,4 @@ public class SwerveConstants {
 
     public static final double maxAcceleration = 3; //TODO
     public static final double maxAngolarAcceleration = maxAcceleration / robotRaduis;
-
-    public static final PIDController xController = new PIDController(0.06, 0, 0);
-    public static final PIDController yController = new PIDController(0.06, 0, 0);
-    public static final ProfiledPIDController angleController = 
-    new ProfiledPIDController(0.06, 0, 0,
-        new TrapezoidProfile.Constraints(maxAV, maxAngolarAcceleration)); 
-        //ask kaplan if i should change the 0.1 to the new p after i changed
-
 }

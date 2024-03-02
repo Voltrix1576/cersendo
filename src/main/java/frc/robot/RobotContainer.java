@@ -8,6 +8,8 @@ package frc.robot;
 import java.net.Socket;
 import java.util.List;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -18,6 +20,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -27,7 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.swerveDriveCommand;
-// import frc.robot.commands.Autos.autoLine;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveDrivetrain;
@@ -39,6 +42,7 @@ import frc.robot.subsystems.swerve.SwerveDrivetrain;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  private Timer m_Timer = new Timer();
   public static final CommandPS4Controller driverController = new CommandPS4Controller(0); 
   public static final CommandXboxController operatorController = new CommandXboxController(1);
   private double startTime;
@@ -69,7 +73,8 @@ public class RobotContainer {
     
     driverController.R2().whileTrue(
     new InstantCommand(() -> SwerveDrivetrain.getInstance().setVelocityFactor(0.25)))
-    .whileFalse(new InstantCommand(() -> SwerveDrivetrain.getInstance().setVelocityFactor(1))); 
+    .whileFalse(new InstantCommand(() -> SwerveDrivetrain.getInstance().setVelocityFactor(1)));
+    
 
     operatorController.a().onTrue(
       new SequentialCommandGroup(
@@ -84,7 +89,8 @@ public class RobotContainer {
     );
 
     operatorController.rightBumper().onTrue(
-      new SequentialCommandGroup(new InstantCommand(() -> Shooter.getInstance().shootSpeaker(0.6)),
+      new SequentialCommandGroup(
+        new InstantCommand(() -> Shooter.getInstance().shootSpeaker(0.6)),
         new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
         new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 1.5), //delay to start conveyr
         new InstantCommand(() -> Shooter.getInstance().startConveyer(0.6)),
@@ -99,21 +105,53 @@ public class RobotContainer {
     );
 
     operatorController.b().onTrue(
-    new InstantCommand(() -> Shooter.getInstance().shootInTake(-0.15)))
+    new InstantCommand(() -> Shooter.getInstance().shootInTake(-0.4)))
     .onFalse(new InstantCommand(() -> Shooter.getInstance().shootInTake(0)));
     
-    operatorController.x().whileTrue(
+    operatorController.x().onTrue(
+    new InstantCommand(() -> Shooter.getInstance().startClimb()));
+
+    operatorController.y().whileTrue(
+      new InstantCommand(() -> Shooter.getInstance().AdjustSetPower(-0.2)))
+      .onFalse(new InstantCommand(() -> Shooter.getInstance().setAdjustVolt(0.38)));
+
+    driverController.circle().onTrue(
+      new InstantCommand(() -> Shooter.getInstance().zeroServo()));
+
+    driverController.cross().onTrue(
+      new InstantCommand(() -> Shooter.getInstance().oneEightServo()));
+
+    driverController.square().onTrue(
+      new InstantCommand(() -> Shooter.getInstance().threeSixServo()));  
+
+    operatorController.povUp().whileTrue(
     new InstantCommand(() -> Shooter.getInstance().AdjustSetPower(0.1)))
     .whileFalse(new InstantCommand(() -> Shooter.getInstance().setAdjustVolt(0.38)));
   
-   operatorController.y().whileTrue(
-    new InstantCommand(() -> Shooter.getInstance().AdjustSetPower(-0.2)))
+   operatorController.povDown().whileTrue(
+    new InstantCommand(() -> Shooter.getInstance().AdjustSetPower(-1)))
     .whileFalse(new InstantCommand(() -> Shooter.getInstance().setAdjustVolt(0.38)));
 
-  //  operatorController.rightTrigger().whileTrue(
-  //   new InstantCommand(() -> Shooter.getInstance().shootAmp(0.15)))
-  //   .whileFalse(new InstantCommand(() -> Shooter.getInstance().setAdjustVolt(0.38))); 
+   operatorController.povLeft().whileTrue(
+    new InstantCommand(() -> Shooter.getInstance().startShooter(-0.4))
+   ).whileFalse( new InstantCommand(() -> Shooter.getInstance().startShooter(0)));
+
+   operatorController.povLeft().whileTrue(
+    new InstantCommand(() -> Shooter.getInstance().startConveyer(-0.4))
+   ).whileFalse( new InstantCommand(() -> Shooter.getInstance().startConveyer(0)));
+
+   operatorController.rightTrigger().whileTrue(
+    new InstantCommand(() -> Shooter.getInstance().startShooter(0.8)))
+    .whileFalse(new InstantCommand(() -> Shooter.getInstance().startShooter(0))); 
+  
+   operatorController.leftTrigger().whileTrue(
+    new InstantCommand(() -> Shooter.getInstance().startConveyer(0.4)))
+    .whileFalse(new InstantCommand(() -> Shooter.getInstance().startConveyer(0))); 
+
+
   }
+
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -121,6 +159,61 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null;
+    m_Timer.reset();
+    m_Timer.start();
+    
+    
+    //speaker straight line
+    return new SequentialCommandGroup(
+      // new InstantCommand(() -> Shooter.getInstance().shootSpeaker(0.6)),
+      // new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+      // new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 1.5), //delay to start conveyr
+      // new InstantCommand(() -> Shooter.getInstance().startConveyer(0.6)),
+      // new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+      // new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 1),
+      // new InstantCommand(() -> Shooter.getInstance().resetShoot()),
+      new InstantCommand(() -> SwerveDrivetrain.getInstance().drive(0, 0, 0, true)),
+      new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+      new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 4),
+      new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+      new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 1),
+      new InstantCommand(() -> SwerveDrivetrain.getInstance().drive(0, 0, 0, true))
+    );
+
+    //near amp
+    // return new SequentialCommandGroup(
+      // new InstantCommand(() -> Shooter.getInstance().shootSpeaker(0.6)),
+      // new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+      // new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 1.5), //delay to start conveyr
+      // new InstantCommand(() -> Shooter.getInstance().startConveyer(0.6)),
+      // new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+      // new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 1),
+      // new InstantCommand(() -> Shooter.getInstance().resetShoot()),
+      // new InstantCommand(() -> SwerveDrivetrain.getInstance().drive(0, 0.4, 0, true)),
+      // new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+      // new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 4),
+      // new InstantCommand(() -> SwerveDrivetrain.getInstance().drive(-0.5, 0, 0, true)),
+      // new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+      // new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 4),
+      // new InstantCommand(() -> SwerveDrivetrain.getInstance().drive(0, 0, 0, true))
+    // );
+
+    //near opponent source
+    //   return new SequentialCommandGroup(
+    //   new InstantCommand(() -> Shooter.getInstance().shootSpeaker(0.6)),
+    //   new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+    //   new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 1.5), //delay to start conveyr
+    //   new InstantCommand(() -> Shooter.getInstance().startConveyer(0.6)),
+    //   new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+    //   new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 1),
+    //   new InstantCommand(() -> Shooter.getInstance().resetShoot()),
+    //   new InstantCommand(() -> SwerveDrivetrain.getInstance().drive(0, 0.4, 0, true)),
+    //   new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+    //   new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 5),
+    //   new InstantCommand(() -> SwerveDrivetrain.getInstance().drive(-0.5, 0, 0, true)),
+    //   new InstantCommand(() -> startTime = Timer.getFPGATimestamp()),
+    //   new WaitUntilCommand(() -> Timer.getFPGATimestamp() - startTime >= 4),
+    //   new InstantCommand(() -> SwerveDrivetrain.getInstance().drive(0, 0, 0, true))
+    // );
   }
 }

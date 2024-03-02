@@ -16,6 +16,9 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Shooter extends SubsystemBase {
@@ -40,7 +43,8 @@ public class Shooter extends SubsystemBase {
 
     private final TalonSRX backSlaveShooter = new TalonSRX(ShooterConstance.backSlaveShootingID);
 
-   // private final Servo armServo = new Servo(0);
+   private final Servo breakServo = new Servo(1);
+   
 
     private final SparkPIDController pidControllerAdjust;
 
@@ -75,9 +79,34 @@ public class Shooter extends SubsystemBase {
        frontMasterShooting.set(power);
   }
 
+  public void startShooter(double power) {
+    frontMasterShooting.set(power);
+    frontSlaveShooting.set(power);  
+  }  
+
   public void startConveyer(double power) {
     backMasterShooter.set(power);
     backSlaveShooter.set(TalonSRXControlMode.PercentOutput, power);
+  }
+
+  public void startClimb() {
+      calculate(15);
+  }
+
+  public void climb(double power) {
+    AdjustSetPower(power);
+  }
+
+  public void zeroServo() {
+    breakServo.setAngle(0);
+  }
+
+public void oneEightServo() {
+    breakServo.setAngle(180);
+  }
+
+   public void threeSixServo() {
+    breakServo.setAngle(360);
   }
 
   public void resetArm()
@@ -92,7 +121,14 @@ public class Shooter extends SubsystemBase {
   }
 
    public void shootInTake(double power) {
-    calculate(13.69);
+    calculate(11);
+    frontMasterShooting.set(power);
+    backMasterShooter.set(power);
+    backSlaveShooter.set(TalonSRXControlMode.PercentOutput, power);
+  }
+
+  public void shootInTakeBack(double power) {
+    calculate(11.2);
     frontMasterShooting.set(power);
     backMasterShooter.set(power);
     backSlaveShooter.set(TalonSRXControlMode.PercentOutput, power);

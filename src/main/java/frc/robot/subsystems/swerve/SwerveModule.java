@@ -41,10 +41,12 @@ public class SwerveModule {
         absulotEncoder = new CANcoder(absulotEncoderid);
 
         TurningMotor.setIdleMode(IdleMode.kCoast);
-        driveMotor.setIdleMode(IdleMode.kBrake);
+        driveMotor.setIdleMode(IdleMode.kCoast);
 
         driveMotor.setInverted(isDriveMotorInverted);
         TurningMotor.setInverted(isTurningMotorInverted);
+        TurningMotor.setSmartCurrentLimit(30);
+        driveMotor.setSmartCurrentLimit(30);
 
         driveEncoder = driveMotor.getEncoder();
         TurningEncoder = TurningMotor.getEncoder();
